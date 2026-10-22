@@ -83,9 +83,10 @@ with st.sidebar:
         "What is the total revenue lost to returns per return reason?",
         "What is the average discount percentage applied across all order items?"
     ]
-    for q in sample_queries:
-        if st.button(q, key=f"btn_{q[:15]}", use_container_width=True):
+    for idx, q in enumerate(sample_queries):
+        if st.button(q, key=f"btn_sample_{idx}", use_container_width=True):
             st.session_state["user_input"] = q
+            st.rerun()
 
 
 # ---------------- MAIN CONTENT ----------------
@@ -96,15 +97,17 @@ st.markdown(
     "autonomously repairs errors via a self-healing reflection loop, and delivers executive summaries with charts."
 )
 
+if "user_input" not in st.session_state:
+    st.session_state["user_input"] = ""
+
 # Text Input
 user_query = st.text_input(
     "Ask a business analytics question:",
     value=st.session_state.get("user_input", ""),
     placeholder="e.g. Which customers spent the most money and what is their customer tier?",
-    key="query_input"
 )
 
-if st.button("Run Analytics Engine", type="primary") or (user_query and st.session_state.get("trigger_run", False)):
+if st.button("Run Analytics Engine", type="primary"):
     if not user_query.strip():
         st.warning("Please enter a question to analyze.")
     else:
